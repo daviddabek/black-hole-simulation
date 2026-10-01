@@ -2,8 +2,9 @@ from ursina import *
 import random
 import math
 
-from star import Star
-from black_hole import BlackHole
+from Star import Star
+from BlackHole import BlackHole
+from AccretionDisk import AccretionDisk
 
 # Constant for the mass of the sun in kilograms
 SOLAR_MASS = 1.989e30
@@ -71,11 +72,11 @@ def create_star_field(num_stars, radius):
         z = r * math.cos(phi)
 
         # Create a Star object
-        star = Star(
+        Star(
             position=(x, y, z)
         )
 
-        stars.append(star)
+        stars.append(Star)
 
     return stars
 
@@ -85,9 +86,12 @@ stars = create_star_field(700, 50)
 
 
 # Black Hole implementation
-black_hole = BlackHole(
+BlackHole = BlackHole(
     mass=10 * SOLAR_MASS,
     simulation_radius=2
 )
+
+disk = AccretionDisk(BlackHole, num_particles=1000)
+disk.rotation_x = 20
 
 app.run()
