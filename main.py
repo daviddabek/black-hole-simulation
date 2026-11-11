@@ -25,7 +25,7 @@ class SpaceCamera(Entity):
         super().__init__()
 
         self.mouse_sensitivity = 100
-        self.position = (0, 0, -50)  # Start far away from the origin
+        self.position = (0, 0, -70)  # Start far away from the origin
         self.rotation = (0, 0, 0)
         self.speed = 10
 
@@ -64,7 +64,6 @@ class SpaceCamera(Entity):
 camera_controller = SpaceCamera()
 camera.parent = camera_controller
 camera.position = (0, 0, 0)
-# player = EditorCamera()
 
 # Creates many Star objects and places them randomly within a spherical region.
 def create_star_field(num_stars, radius):

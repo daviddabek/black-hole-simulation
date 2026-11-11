@@ -57,20 +57,21 @@ class AccretionDisk(Entity):
 
     def __init__(self, black_hole, num_particles=1000,
                  inner_factor=3, outer_factor=7,
-                 base_angular_velocity=1.5):
+                 base_angular_velocity=1.5,
+                 thickness_ratio=0.03, density_exponent=2):
 
         super().__init__(position=black_hole.position)
 
-        # The black hole's radius in simulation units.
         horizon_radius = black_hole.simulation_radius
 
-        # Inner edge = 3 x Schwarzschild radius (the ISCO).
-        # Outer edge is a visual choice.
         self.inner_radius = inner_factor * horizon_radius
         self.outer_radius = outer_factor * horizon_radius
 
-        # Angular velocity of a particle at the inner edge (radians/second).
         self.base_angular_velocity = base_angular_velocity
+
+        # Disk shape settings (used by create_particle).
+        self.thickness_ratio = thickness_ratio
+        self.density_exponent = density_exponent
 
         self.particles = []
 
@@ -88,18 +89,22 @@ class AccretionDisk(Entity):
         return self.base_angular_velocity * ratio ** 1.5
 
     def create_particle(self):
-        # Create one particle at a random radius and random angle."""
+        """Create one particle at a random position in the disk."""
 
-        radius = random.uniform(self.inner_radius, self.outer_radius)
+        # 0 = inner edge, 1 = outer edge. Raising a random number to a
+        # power above 1 pushes values towards 0, so the inner disk is denser.
+        t = random.random() ** self.density_exponent
+
+        radius = self.inner_radius + t * (self.outer_radius - self.inner_radius)
         angle = random.uniform(0, 2 * math.pi)
 
         omega = self.angular_velocity_at(radius)
 
-        # 0 = at the inner edge, 1 = at the outer edge.
-        t = (radius - self.inner_radius) / (self.outer_radius - self.inner_radius)
+        # Thicker further out: spread is proportional to radius.
+        spread = self.thickness_ratio * radius
+        vertical_offset = random.gauss(0, spread)
 
-        # Hue (colour wheel position in degrees): yellow near the
-        # black hole, shifting to red at the outside.
+        # Hue: yellow near the black hole, shifting to red at the outside.
         hue = 50 - 40 * t
         particle_color = color.hsv(hue, 0.85, 1)
 
@@ -108,7 +113,8 @@ class AccretionDisk(Entity):
             orbital_radius=radius,
             angle=angle,
             angular_velocity=omega,
-            particle_color=particle_color
+            particle_color=particle_color,
+            vertical_offset=vertical_offset
         )
 
     def update(self):
