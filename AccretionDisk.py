@@ -9,13 +9,14 @@ class DiskParticle(Entity):
     One small blob of gas in the accretion disk.
 
     Each particle moves on a circular orbit. Its position is described by
-    two numbers:
-        orbital_radius : distance from the black hole (fixed)
-        angle          : how far round the circle it currently is (changes)
+    three numbers:
+        orbital_radius  : distance from the black hole (fixed)
+        angle           : how far round the circle it currently is (changes)
+        vertical_offset : height above/below the disk's middle plane (fixed)
     """
 
     def __init__(self, parent, orbital_radius, angle, angular_velocity,
-                 particle_color, size=0.08):
+                 particle_color, vertical_offset=0, size=0.08):
 
         super().__init__(
             parent=parent,
@@ -27,6 +28,7 @@ class DiskParticle(Entity):
         self.orbital_radius = orbital_radius
         self.angle = angle
         self.angular_velocity = angular_velocity
+        self.vertical_offset = vertical_offset
 
         # Place the particle at its starting position.
         self.move(0)
@@ -39,7 +41,7 @@ class DiskParticle(Entity):
         # Polar -> Cartesian, in the disk's flat (x, z) plane.
         self.x = self.orbital_radius * math.cos(self.angle)
         self.z = self.orbital_radius * math.sin(self.angle)
-        self.y = 0
+        self.y = self.vertical_offset
 
 
 class AccretionDisk(Entity):

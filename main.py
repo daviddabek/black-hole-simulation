@@ -24,9 +24,10 @@ class SpaceCamera(Entity):
 
         super().__init__()
 
-        self.position = (0, 0, -15)
+        self.mouse_sensitivity = 100
+        self.position = (0, 0, -50)  # Start far away from the origin
         self.rotation = (0, 0, 0)
-        self.speed = 3
+        self.speed = 10
 
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -47,10 +48,23 @@ class SpaceCamera(Entity):
         if held_keys['d']:
             self.position += self.right * time.dt * self.speed
 
+        if held_keys['shift']:
+            self.position += self.up * time.dt * self.speed
+
+        if held_keys['control']:
+            self.position -= self.up * time.dt * self.speed
+
+        if held_keys['right mouse']:
+            self.rotation_y += mouse.velocity[0] * self.mouse_sensitivity
+            self.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity
+
+        # Prevent flipping upside-down
+        self.rotation_x = clamp(self.rotation_x, -90, 90)
+
 camera_controller = SpaceCamera()
 camera.parent = camera_controller
 camera.position = (0, 0, 0)
-player = EditorCamera()
+# player = EditorCamera()
 
 # Creates many Star objects and places them randomly within a spherical region.
 def create_star_field(num_stars, radius):
@@ -86,12 +100,12 @@ stars = create_star_field(700, 50)
 
 
 # Black Hole implementation
-BlackHole = BlackHole(
+black_hole = BlackHole(
     mass=10 * SOLAR_MASS,
     simulation_radius=2
 )
 
-disk = AccretionDisk(BlackHole, num_particles=1000)
+disk = AccretionDisk(black_hole, num_particles=1000)
 disk.rotation_x = 20
 
 app.run()

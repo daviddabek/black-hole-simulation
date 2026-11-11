@@ -42,3 +42,22 @@ $$
 - No gas physics: no pressure, friction, magnetic fields, turbulence or heating.
 - Particles do not interact with each other.
 - The tilt is a fixed visual choice.
+
+## Disk thickness (Stage 6A)
+
+Each particle has a fixed vertical offset from the disk's middle plane, drawn from a Gaussian distribution whose spread is proportional to the particle's orbital radius. This produces a flared disk: thin near the black hole, thicker further out.
+
+Topic: Gaussian (normal) distribution
+Topic: Scale height / flared accretion disk
+
+## Density variation (Stage 6B)
+
+Particle radii are chosen by raising a uniform random number to a power (`t = u ** 2`), which biases particles towards the inner edge. Real disks have higher surface density closer to the black hole.
+
+Topic: Surface density of an accretion disk
+Topic: Non-uniform random sampling
+
+### Added limitations
+- The thickness is a visual choice, not derived from gas pressure or temperature.
+- The density profile is a visual choice, not a physical model.
+- Heights are fixed per particle; there is no vertical motion.
